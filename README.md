@@ -12,6 +12,13 @@ You "may" change the ROMPath if your have annother default setting as `/home/pi/
 
 As the `retropiemenu` makes calls via `bash` there is no need to make this file executable. You can do this of course by typing `chmod +x /home/pi/RetroPie/retropiemenu/BashROMManager.sh`
 
+If you are not soooo familiar with unix system just enter the commands above
+```
+wget https://raw.githubusercontent.com/crcerror/RetroPie-RPM-BashROMManager/master/BashROMManager.sh
+mv BashROMManager.sh ~/RetroPie/retropiemenu
+chmod +x ~/RetroPie/retropiemenu/BashROMManager.sh
+```
+
 ## How does this work
 
 I wanted to write this as simple as possible.
