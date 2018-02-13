@@ -1,3 +1,4 @@
+#!/bin/bash
 # cyperghosts BashROMManager 0.31
 #
 # 31/01/18 - 0.1 Selectable Files, no release
