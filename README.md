@@ -61,3 +61,7 @@ So
 
 **4. File is deleted as the folder is now empty zxspectrum will not be listed anymore**
 ![img](https://up.picr.de/31816397hx.png)
+
+# How can I help?
+
+Improve the script!
