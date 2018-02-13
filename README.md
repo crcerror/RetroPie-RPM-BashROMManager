@@ -10,6 +10,8 @@ Second annoying thing is that RetroPie does not support selection lists via game
 Copy the bashfile just into folder `/home/pi/RetroPie/retropiemenu` from your RetroPie installation.
 You "may" change the ROMPath if your have annother default setting as `/home/pi/RetroPie/roms`
 
+As the `retropiemenu` makes calls via `bash` there is no need to make this file executable. You can do this of course by typing `chmod +x /home/pi/RetroPie/retropiemenu/BashROMManager.sh`
+
 ## How does this work
 
 I wanted to write this as simple as possible.
