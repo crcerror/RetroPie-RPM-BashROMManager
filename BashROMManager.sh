@@ -76,7 +76,7 @@ function del_files() {
     local e
     for e in "${del_array[@]}"; do
         dialog --yesno "I will delete following file after you choose YES\n\n$e\n" 10 60
-        [ $? = 0 ] && echo "$e" && sleep 1
+        [ $? = 0 ] && rm -f "$e"
     done
 }
 
