@@ -1,5 +1,5 @@
 #!/bin/bash
-# cyperghosts BashROMManager 0.31
+# cyperghosts BashROMManager 0.50
 #
 # 31/01/18 - 0.1 Selectable Files, no release
 # 07/02/18 - 0.2 Per System selection, no relase
@@ -76,7 +76,7 @@ function del_files() {
     local e
     for e in "${del_array[@]}"; do
         dialog --yesno "I will delete following file after you choose YES\n\n$e\n" 10 60
-        [ $? = 0 ] && rm -f "$e"
+        [ $? = 0 ] && echo "$e" && sleep 1
     done
 }
 
@@ -162,9 +162,9 @@ do
         case $choices in
            [1-9999]*) toggle_entry
                       ;;
-                   E) folderselect=0 
-                      [ ${#del_array[@]} = 0 ] && return
-                      del_files; break 
+                   E) folderselect=0
+                      [ ${#del_array[@]} = 0 ] && dialog --msgbox "Please select files to delete" 0 0
+                      del_files; break
                       ;;
                    B) folderselect=1; break
                       ;;
