@@ -1,11 +1,12 @@
 #!/bin/bash
-# cyperghosts BashROMManager 0.50
+# cyperghosts BashROMManager 0.51
 #
-# 31/01/18 - 0.1 Selectable Files, no release
-# 07/02/18 - 0.2 Per System selection, no relase
-# 12/02/18 - 0.3 Detect empty directories, no release
-# 13/02/18 -0.31 Full console Names in array, Loop function
-# 15/02/18 - 0.5 Multiple selection possible
+# 31/01/18 - 0.10 Selectable Files, no release
+# 07/02/18 - 0.20 Per System selection, no relase
+# 12/02/18 - 0.30 Detect empty directories, no release
+# 13/02/18 - 0.31 Full console Names in array, Loop function
+# 15/02/18 - 0.50 Multiple selection possible
+# 16/02/18 - 0.51 SubDirectories not selectable, some cosmetic effects
 #
 # This will let you delete files in specific ROM folders
 # This script is best called into RetroPie Menu
@@ -14,8 +15,9 @@
 # by cyperghost for retropie.org.uk
 
 # Enter ROM Directory it will be sanitized
-    rom_dir="/home/pi/RetroPie/roms"
+    rom_dir="/home/pi/RetroPie/roms/"
     [ -z "${rom_dir##*/}" ] && rom_dir="${rom_dir%?}"
+    ! [ -d "$rom_dir" ] && dialog --msgbox "Invalid Path!\n$rom_dir" 0 0 && exit 1
 
 # Folder Array
     folder_array=("$rom_dir"/*/)
@@ -23,7 +25,6 @@
     folder_array=("${folder_array[@]##*/}")
 
 # Console Array
-
     console=("3do" "Panasonic 3DO" "atari2600" "Atari 2600" "atari5200" "Atari 5200" "atarijaguar" "Atari Jaguar" "coleco" "ColecoVision" \
              "dreamcast" "Sega Dreamcast" "famicom" "Nintendo Famicom" "intellivision" "IntelliVision" "markiii" "Sega Mark III" \
              "mastersystem" "Sega Master System" "megadrive" "Sega MegaDrive" "segacd" "Sega MegaCD" "n64" "Nintendo 64" \
@@ -31,7 +32,6 @@
              "pcengine" "NEC PC-Engine" "pcenginecd" "NEC PC_EnigneCD" "psx" "Sony Playstation" "saturn" "Sega Saturn" \
              "sega32x" "Sega 32X" "sfc" "Nintendo Super Famicom" "snes" "Super Nintendo Entertainment System" "tg16" "TurboGrafx 16" \
              "tg16cd" "TurboGrafx 16CD" "cps1" "Capcom Play System I" "cps2" "Capcom Play System II" "cps3" "Capcom Play System III")
-
 
 function contains_element () {
     # Search array for entry
@@ -60,7 +60,7 @@ function folder_select() {
         fi
     done
 
-    local cmd=(dialog --backtitle "cyperghosts BashROMManager v0.50" \
+    local cmd=(dialog --backtitle "cyperghosts BashROMManager v0.51" \
                       --title " Systemselection " \
                       --cancel-label "Exit to ES" \
                       --menu "Available systems:" 16 70 16)
@@ -90,7 +90,9 @@ function toggle_entry() {
     #
     # Sleep is for debouncing
 
-    if [[ "${options[choices*2-1]}" ]]; then 
+    [ "${options[choices*2-1]}" = "SUBDIRECTORY - not selectable!" ] && return
+
+    if [ "${options[choices*2-1]}" ]; then 
         del_array+=("${file_array[choices-1]}")
         options[choices*2-1]=""
     else
@@ -138,6 +140,7 @@ do
             file_name="${file_array[z]##*/}"
             extension="${file_name##*.}"
             [ "$extension" != "$file_name" ] && options+=("$((z+1))" "$extension - $file_name")
+            [ "$extension" == "$file_name" ] && options+=("$((z+1))" "SUBDIRECTORY - not selectable!")
         done
 
     # Array validity check!
@@ -146,12 +149,12 @@ do
     # Build Dialog output of File selection
     while true
     do
-        cmd=(dialog --backtitle "cyperghosts BashROMManager v0.50" \
-                    --default-item "$choices"
+        cmd=(dialog --backtitle "cyperghosts BashROMManager v0.51" \
+                    --default-item "$choices" \
                     --title " Selected Console: $console_name" \
-                    --ok-label "Select Item"
+                    --ok-label "Select Item" \
                     --cancel-label "Back to SysSelection" \
-                    --extra-button --extra-label "Delete ${#del_array[@]} items in queue"
+                    --extra-button --extra-label "Erase ${#del_array[@]} queued items" \
                     --menu "Select files you want to add to delete queue" 17 80 16)
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
