@@ -71,6 +71,21 @@ So
 **4. File is deleted as the folder is now empty zxspectrum will not be listed anymore**
 ![img](https://up.picr.de/31816397hx.png)
 
+# Updates to v.050
+
+**1. Multi selection of files**
+![img](https://up.picr.de/31838955tu.png)
+
+**2. Selected 4 files that are sended to queue**
+![img](https://up.picr.de/31838956ov.png)
+
+**3. Wait! I don't want to delete a specific ROM, so I select it again - see the queue counter holds now only three items**
+![img](https://up.picr.de/31838957ob.png)
+
+# Updates to v.071
+**1. Used FastForward two times and rushed 20% of gamelist**
+![img](https://up.picr.de/31869206ob.png)
+
 # How can I help?
 
 Improve the script!
