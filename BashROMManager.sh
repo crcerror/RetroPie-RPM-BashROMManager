@@ -1,5 +1,5 @@
 #!/bin/bash
-# cyperghosts BashROMManager 0.51
+# cyperghosts BashROMManager 0.77
 #
 # 31/01/18 - 0.10 Selectable Files, no release
 # 07/02/18 - 0.20 Per System selection, no relase
@@ -7,7 +7,9 @@
 # 13/02/18 - 0.31 Full console Names in array, Loop function
 # 15/02/18 - 0.50 Multiple selection possible
 # 16/02/18 - 0.51 SubDirectories not selectable, some cosmetic effects
-#
+# 17/02/18 - 0.61 Added FAST FORWORD button, some correction in comments
+# 18/02/18 - 0.77 FAST FORWARD regards entry list and calculates jumps
+
 # This will let you delete files in specific ROM folders
 # This script is best called into RetroPie Menu
 # Into the menu choose 'BashROMManager'
@@ -15,7 +17,7 @@
 # by cyperghost for retropie.org.uk
 
 # Enter ROM Directory it will be sanitized
-    rom_dir="/home/pi/RetroPie/roms/"
+    rom_dir="/home/pi/RetroPie/roms"
     [ -z "${rom_dir##*/}" ] && rom_dir="${rom_dir%?}"
     ! [ -d "$rom_dir" ] && dialog --msgbox "Invalid Path!\n$rom_dir" 0 0 && exit 1
 
@@ -41,7 +43,7 @@ function contains_element () {
     local match="$1"
     idx=0
     shift
-        for e; do [[ "$e" == "$match" ]] && return 1; idx=$((idx+1)); done
+        for e; do [ "$e" == "$match" ] && return 1; idx=$((idx+1)); done
     return 0
 }
 
@@ -60,10 +62,11 @@ function folder_select() {
         fi
     done
 
-    local cmd=(dialog --backtitle "cyperghosts BashROMManager v0.51" \
+    local cmd=(dialog --backtitle "cyperghosts BashROMManager v0.77" \
                       --title " Systemselection " \
+                      --ok-label "Select System" \
                       --cancel-label "Exit to ES" \
-                      --menu "Available systems:" 16 70 16)
+                      --menu "There are $((${#options[@]}/2)) systems available:" 16 70 16)
     local choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
     rom_sysdir="$rom_dir/$choices"
@@ -83,8 +86,8 @@ function del_files() {
 function toggle_entry() {
     # This actives/deactives entry in file selection list
     # If a file is located it will be set to del_array and the entry will be faded out in list
-    # If an entry is already faded out, the filename will be rebuild and entry will removed from del_arry
-    # IF part REBUILDS entries, ELSE removes file from entry and sets to file to del_array
+    # If entry is already faded out, the filename will be rebuild and entry will removed from del_arry
+    # IF removes file from entry and sets to file to del_arraypart, ELSE branch REBUILDS entries 
     #
     # --- Terrible coded ---
     #
@@ -146,21 +149,26 @@ do
     # Array validity check!
         [ ${#options[@]} = 0 ] && dialog --title " Error " --infobox "\nLikely just a SubDirectory!\n\nExit to EmulationStation!\n" 7 35 && sleep 3 && exit
 
+    choices=1 #Revert some small errors
+  
     # Build Dialog output of File selection
     while true
     do
-        cmd=(dialog --backtitle "cyperghosts BashROMManager v0.51" \
+        old_choice=$choices
+        cmd=(dialog --backtitle "cyperghosts BashROMManager v0.77" \
                     --default-item "$choices" \
-                    --title " Selected Console: $console_name" \
-                    --ok-label "Select Item" \
-                    --cancel-label "Back to SysSelection" \
-                    --extra-button --extra-label "Erase ${#del_array[@]} queued items" \
-                    --menu "Select files you want to add to delete queue" 17 80 16)
+                    --title " Selected Console: $console_name " \
+                    --ok-label "Select items" \
+                    --cancel-label "Return" \
+                    --help-button  --help-label "Erase ${#del_array[@]} items" \
+                    --extra-button --extra-label "Fast Forward" \
+                    --menu "There are $idx files available select them and add to delete queue" 17 80 16)
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
         status=$?
-        [ $status = 3 ] && choices="E"
-        [ $status = 1 ] && choices="B"
+        [ $status = 3 ] && choices="F" # Extra Button
+        [ $status = 2 ] && choices="E" # Help Button
+        [ $status = 1 ] && choices="B" # Cancel Button
 
         case $choices in
            [1-9999]*) toggle_entry
@@ -170,6 +178,10 @@ do
                       del_files; break
                       ;;
                    B) folderselect=1; break
+                      ;;
+                   F) choices=${idx%?}; choices=($((old_choice+choices+1)))
+                      [ $choices -gt $idx ] && choices=$idx
+                      [ $old_choice -eq $idx ] && choices=1
                       ;;
                    *) exit 1
                       ;;
