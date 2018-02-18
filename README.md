@@ -50,10 +50,10 @@ This looks awful... isn't it?
 
 So
 1. The shortnames atari2600, gb, nes will be displayed as their real names
-  + cps1 - Capcom Play System 1
-  + nes - Nintendo Entertainment system
-  + gb - Nintendo GameBoy
-  + atari2600 - Atari 2600.....
+    + cps1 - Capcom Play System 1
+    + nes - Nintendo Entertainment system
+    + gb - Nintendo GameBoy
+    + atari2600 - Atari 2600.....
 2. Empty folder/systems will be ignored and can't be selected
 3. If a system contains subfolder the subfolder will also be ignored and can't be selected
 
@@ -73,7 +73,7 @@ So
 
 # Updates to v.050
 
-**1. Multi selection of files**
+**1. Multi selection of files several files**
 ![img](https://up.picr.de/31838955tu.png)
 
 **2. Selected 4 files that are sended to queue**
@@ -82,7 +82,8 @@ So
 **3. Wait! I don't want to delete a specific ROM, so I select it again - see the queue counter holds now only three items**
 ![img](https://up.picr.de/31838957ob.png)
 
-# Updates to v.071
+# Updates to v.077
+
 **1. Used FastForward two times and rushed 20% of gamelist**
 ![img](https://up.picr.de/31869206ob.png)
 
