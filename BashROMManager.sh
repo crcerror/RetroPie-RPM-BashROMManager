@@ -18,8 +18,8 @@
 
 # Enter ROM Directory it will be sanitized
 rom_dir="/home/pi/RetroPie/roms"
-[ -z "${rom_dir##*/}" ] && rom_dir="${rom_dir%?}"
-! [ -d "$rom_dir" ] && dialog --msgbox "Invalid Path!\n$rom_dir" 0 0 && exit 1
+[[ -z "${rom_dir##*/}" ]] && rom_dir="${rom_dir%?}"
+[[ ! -d "$rom_dir" ]] && dialog --msgbox "Invalid Path!\n$rom_dir" 0 0 && exit 1
 
 # Folder Array
 folder_array=("$rom_dir"/*/)
@@ -43,7 +43,10 @@ function contains_element () {
     local match="$1"
     idx=0
     shift
-    for e; do [ "$e" == "$match" ] && return 1; idx=$((idx+1)); done
+    for e; do
+        [[ "$e" == "$match" ]] && return 1
+        idx=$((idx+1))
+    done
     return 0
 }
 
@@ -53,12 +56,11 @@ function folder_select() {
     local i
     local options
 
-    for i in "${folder_array[@]}"
-    do
-       if [ -z "$(find "$rom_dir/$i" -type d -empty)" ]; then 
+    for i in "${folder_array[@]}"; do
+       if [[ -z "$(find "$rom_dir/$i" -type d -empty)" ]]; then 
             contains_element "$i" "${console[@]}"
-            [ $? = 0 ] && options+=("$i" "System unknown")
-            [ $? = 1 ] && options+=("$i" "${console[idx+1]}")
+            [[ $? == 0 ]] && options+=("$i" "System unknown")
+            [[ $? == 1 ]] && options+=("$i" "${console[idx+1]}")
         fi
     done
 
@@ -79,7 +81,7 @@ function del_files() {
     local e
     for e in "${del_array[@]}"; do
         dialog --yesno "I will delete following file after you choose YES\n\n$e\n" 10 60
-        [ $? = 0 ] && rm -f "$e"
+        [[ $? == 0 ]] && rm -f "$e"
     done
 }
 
@@ -93,9 +95,9 @@ function toggle_entry() {
     #
     # Sleep is for debouncing
 
-    [ "${options[choices*2-1]}" = "SUBDIRECTORY - not selectable!" ] && return
+    [[ "${options[choices*2-1]}" == "SUBDIRECTORY - not selectable!" ]] && return
 
-    if [ "${options[choices*2-1]}" ]; then 
+    if [[ "${options[choices*2-1]}" ]]; then 
         del_array+=("${file_array[choices-1]}")
         options[choices*2-1]=""
     else
@@ -114,21 +116,20 @@ function toggle_entry() {
 
 folderselect=1 #Needed to select system in first run
 
-while true
-do
+while true; do
     # Save some space and empty arrays on loop
     unset options
     unset del_array
 
     # Run System Selection on first run
-    [ $folderselect = 1 ] && folder_select
-    [ -z "${rom_sysdir##*/}" ] && echo "Aborting..." && exit
+    [[ "$folderselect" == 1 ]] && folder_select
+    [[ -z "${rom_sysdir##*/}" ]] && echo "Aborting..." && exit
 
 
     # Get Console Name
     contains_element "${rom_sysdir##*/}" "${console[@]}"
-    [ $? = 0 ] && console_name="${rom_sysdir##*/} - System unknown" 
-    [ $? = 1 ] && console_name="${console[idx+1]}"
+    [[ $? == 0 ]] && console_name="${rom_sysdir##*/} - System unknown" 
+    [[ $? == 1 ]] && console_name="${console[idx+1]}"
 
     # Build file Array for path $rom_sysdir and get Array size
     file_array=("$rom_sysdir"/*)
@@ -142,12 +143,12 @@ do
     do
         file_name="${file_array[z]##*/}"
         extension="${file_name##*.}"
-        [ "$extension" != "$file_name" ] && options+=("$((z+1))" "$extension - $file_name")
-        [ "$extension" == "$file_name" ] && options+=("$((z+1))" "SUBDIRECTORY - not selectable!")
+        [[ "$extension" != "$file_name" ]] && options+=("$((z+1))" "$extension - $file_name")
+        [[ "$extension" == "$file_name" ]] && options+=("$((z+1))" "SUBDIRECTORY - not selectable!")
     done
 
     # Array validity check!
-    [ ${#options[@]} = 0 ] && dialog --title " Error " --infobox "\nLikely just a SubDirectory!\n\nExit to EmulationStation!\n" 7 35 && sleep 3 && exit
+    [[ ${#options[@]} == 0 ]] && dialog --title " Error " --infobox "\nLikely just a SubDirectory!\n\nExit to EmulationStation!\n" 7 35 && sleep 3 && exit
 
     choices=1 #Revert some small errors
   
@@ -166,9 +167,9 @@ do
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
         status=$?
-        [ $status = 3 ] && choices="F" # Extra Button
-        [ $status = 2 ] && choices="E" # Help Button
-        [ $status = 1 ] && choices="B" # Cancel Button
+        [[ $status == 3 ]] && choices="F" # Extra Button
+        [[ $status == 2 ]] && choices="E" # Help Button
+        [[ $status == 1 ]] && choices="B" # Cancel Button
 
         case $choices in
             [1-9999]*)
@@ -176,7 +177,7 @@ do
                 ;;
             E)
                 folderselect=0
-                [ ${#del_array[@]} = 0 ] && dialog --msgbox "Please select files to delete" 0 0
+                [[ ${#del_array[@]} == 0 ]] && dialog --msgbox "Please select files to delete" 0 0
                 del_files
                 break
                 ;;
@@ -187,8 +188,8 @@ do
             F)
                 choices=${idx%?}
                 choices=($((old_choice+choices+1)))
-                [ $choices -gt $idx ] && choices=$idx
-                [ $old_choice -eq $idx ] && choices=1
+                [[ $choices -gt $idx ]] && choices=$idx
+                [[ $old_choice -eq $idx ]] && choices=1
                 ;;
             *)
                 exit 1
