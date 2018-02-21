@@ -61,7 +61,7 @@ function folder_select() {
     for i in "${folder_array[@]}"; do
        if [[ -z "$(find "$rom_dir/$i" -type d -empty)" ]]; then 
             contains_element "$i" "${console[@]}"
-            conole_idx=$?
+            console_idx=$?
             [[ $console_idx == 0 ]] && options+=("$i" "System unknown") || options+=("$i" "${console[console_idx+1]}")
         fi
     done
@@ -106,7 +106,7 @@ function toggle_entry() {
         file_name="${file_array[choices-1]##*/}"
         extension="${file_name##*.}"
         options[choices*2-1]="$extension - $file_name"
-        contains_element "${file_array[choices-1]}" "${del_array[@]}
+        contains_element "${file_array[choices-1]}" "${del_array[@]}"
         unset del_array[$?]
         del_array=("${del_array[@]}")
     fi
