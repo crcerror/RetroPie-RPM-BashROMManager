@@ -62,7 +62,7 @@ function folder_select() {
        if [[ -z "$(find "$rom_dir/$i" -type d -empty)" ]]; then 
             contains_element "$i" "${console[@]}"
             conole_idx=$?
-            [[ $? == 0 ]] && options+=("$i" "System unknown") ||options+=("$i" "${console[console_idx+1]}")
+            [[ $console_idx == 0 ]] && options+=("$i" "System unknown") || options+=("$i" "${console[console_idx+1]}")
         fi
     done
 
@@ -130,7 +130,7 @@ while true; do
     # Get Console Name
     contains_element "${rom_sysdir##*/}" "${console[@]}"
     console_idx=$?
-    [[ $? == 0 ]] && console_name="${rom_sysdir##*/} - System unknown" || console_name="${console[console_idx+1]}"
+    [[ $console_idx == 0 ]] && console_name="${rom_sysdir##*/} - System unknown" || console_name="${console[console_idx+1]}"
 
     # Build file Array for path $rom_sysdir and get Array size
     file_array=("$rom_sysdir"/*)
