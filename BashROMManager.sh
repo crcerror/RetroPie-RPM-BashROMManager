@@ -1,5 +1,5 @@
 #!/bin/bash
-# cyperghosts BashROMManager 0.77
+# cyperghosts BashROMManager 0.79
 #
 # 31/01/18 - 0.10 Selectable Files, no release
 # 07/02/18 - 0.20 Per System selection, no relase
@@ -9,6 +9,8 @@
 # 16/02/18 - 0.51 SubDirectories not selectable, some cosmetic effects
 # 17/02/18 - 0.61 Added FAST FORWORD button, some correction in comments
 # 18/02/18 - 0.77 FAST FORWARD regards entry list and calculates jumps
+# 21/02/18 - Merged cleanup code by @meleu
+# 21/02/19 - 0.79 Bug with idx resolved. Some Code cleanup
 
 # This will let you delete files in specific ROM folders
 # This script is best called into RetroPie Menu
@@ -41,10 +43,10 @@ function contains_element () {
     # idx contains Array position!
     local e
     local match="$1"
-    idx=0
+    local idx=0
     shift
     for e; do
-        [[ "$e" == "$match" ]] && return 1
+        [[ "$e" == "$match" ]] && return $idx
         idx=$((idx+1))
     done
     return 0
@@ -59,12 +61,12 @@ function folder_select() {
     for i in "${folder_array[@]}"; do
        if [[ -z "$(find "$rom_dir/$i" -type d -empty)" ]]; then 
             contains_element "$i" "${console[@]}"
-            [[ $? == 0 ]] && options+=("$i" "System unknown")
-            [[ $? == 1 ]] && options+=("$i" "${console[idx+1]}")
+            conole_idx=$?
+            [[ $? == 0 ]] && options+=("$i" "System unknown") ||options+=("$i" "${console[console_idx+1]}")
         fi
     done
 
-    local cmd=(dialog --backtitle "cyperghosts BashROMManager v0.77" \
+    local cmd=(dialog --backtitle "cyperghosts BashROMManager v0.79" \
                       --title " Systemselection " \
                       --ok-label "Select System" \
                       --cancel-label "Exit to ES" \
@@ -104,8 +106,8 @@ function toggle_entry() {
         file_name="${file_array[choices-1]##*/}"
         extension="${file_name##*.}"
         options[choices*2-1]="$extension - $file_name"
-        contains_element "${file_array[choices-1]}" "${del_array[@]}"
-        unset del_array[idx]
+        contains_element "${file_array[choices-1]}" "${del_array[@]}
+        unset del_array[$?]
         del_array=("${del_array[@]}")
     fi
 
@@ -125,11 +127,10 @@ while true; do
     [[ "$folderselect" == 1 ]] && folder_select
     [[ -z "${rom_sysdir##*/}" ]] && echo "Aborting..." && exit
 
-
     # Get Console Name
     contains_element "${rom_sysdir##*/}" "${console[@]}"
-    [[ $? == 0 ]] && console_name="${rom_sysdir##*/} - System unknown" 
-    [[ $? == 1 ]] && console_name="${console[idx+1]}"
+    console_idx=$?
+    [[ $? == 0 ]] && console_name="${rom_sysdir##*/} - System unknown" || console_name="${console[console_idx+1]}"
 
     # Build file Array for path $rom_sysdir and get Array size
     file_array=("$rom_sysdir"/*)
@@ -147,16 +148,13 @@ while true; do
         [[ "$extension" == "$file_name" ]] && options+=("$((z+1))" "SUBDIRECTORY - not selectable!")
     done
 
-    # Array validity check!
-    [[ ${#options[@]} == 0 ]] && dialog --title " Error " --infobox "\nLikely just a SubDirectory!\n\nExit to EmulationStation!\n" 7 35 && sleep 3 && exit
-
     choices=1 #Revert some small errors
   
     # Build Dialog output of File selection
     while true
     do
         old_choice=$choices
-        cmd=(dialog --backtitle "cyperghosts BashROMManager v0.77" \
+        cmd=(dialog --backtitle "cyperghosts BashROMManager v0.79" \
                     --default-item "$choices" \
                     --title " Selected Console: $console_name " \
                     --ok-label "Select items" \
