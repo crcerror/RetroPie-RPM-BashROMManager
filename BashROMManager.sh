@@ -1,5 +1,5 @@
 #!/bin/bash
-# cyperghosts BashROMManager 0.79
+# cyperghosts BashROMManager 0.80
 #
 # 31/01/18 - 0.10 Selectable Files, no release
 # 07/02/18 - 0.20 Per System selection, no relase
@@ -68,7 +68,7 @@ function folder_select() {
         fi
     done
 
-    local cmd=(dialog --backtitle "cyperghosts BashROMManager v0.79" \
+    local cmd=(dialog --backtitle "cyperghosts BashROMManager v0.80" \
                       --title " Systemselection " \
                       --ok-label "Select System" \
                       --cancel-label "Exit to ES" \
@@ -156,7 +156,7 @@ while true; do
     while true
     do
         old_choice=$choices
-        cmd=(dialog --backtitle "cyperghosts BashROMManager v0.79" \
+        cmd=(dialog --backtitle "cyperghosts BashROMManager v0.80" \
                     --default-item "$choices" \
                     --title " Selected Console: $console_name " \
                     --ok-label "Select items" \
