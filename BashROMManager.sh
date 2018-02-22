@@ -39,8 +39,8 @@ console=("3do" "Panasonic 3DO" "atari2600" "Atari 2600" "atari5200" "Atari 5200"
              "tg16cd" "TurboGrafx 16CD" "cps1" "Capcom Play System I" "cps2" "Capcom Play System II" "cps3" "Capcom Play System III")
 
 # Search array for entry
-# Value 1 if match is in entry! Otherwise return 0 for system not found
-# idx contains Array position!
+# Value 0 if match is in entry! Otherwise return 1 for system not found (use for debugging)
+# idx contains Array position and is set via caller function!
 function contains_element () {
     local e
     local match="$1"
@@ -49,11 +49,11 @@ function contains_element () {
     for e; do
         if [[ "$e" == "$match" ]]; then
             echo "$idx"
-            return 1
+            return 0
         fi
         idx=$((idx+1))
     done
-    return 0
+    return 1
 }
 # Build List Array
 # idx needed to create System name from ${console[]}
