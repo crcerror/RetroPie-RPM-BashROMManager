@@ -37,10 +37,10 @@ console=("3do" "Panasonic 3DO" "atari2600" "Atari 2600" "atari5200" "Atari 5200"
              "sega32x" "Sega 32X" "sfc" "Nintendo Super Famicom" "snes" "Super Nintendo Entertainment System" "tg16" "TurboGrafx 16" \
              "tg16cd" "TurboGrafx 16CD" "cps1" "Capcom Play System I" "cps2" "Capcom Play System II" "cps3" "Capcom Play System III")
 
+# Search array for entry
+# Value 1 if match is in entry! Otherwise return 0 for system not found
+# idx contains Array position!
 function contains_element () {
-    # Search array for entry
-    # Value 1 if match is in entry! Otherwise return 0 for system not found
-    # idx contains Array position!
     local e
     local match="$1"
     local idx=0
@@ -52,9 +52,9 @@ function contains_element () {
     return 0
 }
 
+# Build List Array
+# idx needed to create System name from ${console[]}
 function folder_select() {
-    # Build List Array
-    # idx needed to create System name from ${console[]}
     local i
     local options
 
@@ -78,8 +78,8 @@ function folder_select() {
 
 # --- MAIN Functions ---
 
+# Delete ROM-files
 function del_files() {
-    # Delete ROM-files
     local e
     for e in "${del_array[@]}"; do
         dialog --yesno "I will delete following file after you choose YES\n\n$e\n" 10 60
@@ -87,15 +87,16 @@ function del_files() {
     done
 }
 
+
+# This actives/deactives entry in file selection list
+# If a file is located it will be set to del_array and the entry will be faded out in list
+# If entry is already faded out, the filename will be rebuild and entry will removed from del_arry
+# IF removes file from entry and sets to file to del_arraypart, ELSE branch REBUILDS entries 
+#
+# --- Terrible coded ---
+#
+# Sleep is for debouncing
 function toggle_entry() {
-    # This actives/deactives entry in file selection list
-    # If a file is located it will be set to del_array and the entry will be faded out in list
-    # If entry is already faded out, the filename will be rebuild and entry will removed from del_arry
-    # IF removes file from entry and sets to file to del_arraypart, ELSE branch REBUILDS entries 
-    #
-    # --- Terrible coded ---
-    #
-    # Sleep is for debouncing
 
     [[ "${options[choices*2-1]}" == "SUBDIRECTORY - not selectable!" ]] && return
 
