@@ -11,6 +11,7 @@
 # 18/02/18 - 0.77 FAST FORWARD regards entry list and calculates jumps
 # 21/02/18 - Merged cleanup code by @meleu
 # 21/02/19 - 0.79 Bug with idx resolved. Some Code cleanup
+# 22/02/19 - 0.80 Improved function use @meleu thx
 
 # This will let you delete files in specific ROM folders
 # This script is best called into RetroPie Menu
@@ -46,12 +47,14 @@ function contains_element () {
     local idx=0
     shift
     for e; do
-        [[ "$e" == "$match" ]] && return $idx
+        if [[ "$e" == "$match" ]]; then
+            echo "$idx"
+            return 1
+        fi
         idx=$((idx+1))
     done
     return 0
 }
-
 # Build List Array
 # idx needed to create System name from ${console[]}
 function folder_select() {
@@ -60,9 +63,8 @@ function folder_select() {
 
     for i in "${folder_array[@]}"; do
        if [[ -z "$(find "$rom_dir/$i" -type d -empty)" ]]; then 
-            contains_element "$i" "${console[@]}"
-            console_idx=$?
-            [[ $console_idx == 0 ]] && options+=("$i" "System unknown") || options+=("$i" "${console[console_idx+1]}")
+            array_idx="$(contains_element "$i" "${console[@]}")"
+            [[ $array_idx == 0 ]] && options+=("$i" "System unknown") || options+=("$i" "${console[array_idx+1]}")
         fi
     done
 
@@ -107,8 +109,8 @@ function toggle_entry() {
         file_name="${file_array[choices-1]##*/}"
         extension="${file_name##*.}"
         options[choices*2-1]="$extension - $file_name"
-        contains_element "${file_array[choices-1]}" "${del_array[@]}"
-        unset del_array[$?]
+        array_idx="$(contains_element "${file_array[choices-1]}" "${del_array[@]}")"
+        unset del_array[array_idx]
         del_array=("${del_array[@]}")
     fi
 
@@ -129,9 +131,8 @@ while true; do
     [[ -z "${rom_sysdir##*/}" ]] && echo "Aborting..." && exit
 
     # Get Console Name
-    contains_element "${rom_sysdir##*/}" "${console[@]}"
-    console_idx=$?
-    [[ $console_idx == 0 ]] && console_name="${rom_sysdir##*/} - System unknown" || console_name="${console[console_idx+1]}"
+    array_idx="$(contains_element "${rom_sysdir##*/}" "${console[@]}")"
+    [[ $array_idx == 0 ]] && console_name="${rom_sysdir##*/} - System unknown" || console_name="${console[array_idx+1]}"
 
     # Build file Array for path $rom_sysdir and get Array size
     file_array=("$rom_sysdir"/*)
