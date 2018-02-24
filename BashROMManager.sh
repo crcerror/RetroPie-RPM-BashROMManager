@@ -1,5 +1,5 @@
 #!/bin/bash
-# cyperghosts BashROMManager 0.80
+# cyperghosts BashROMManager 0.81
 #
 # 31/01/18 - 0.10 Selectable Files, no release
 # 07/02/18 - 0.20 Per System selection, no relase
@@ -10,8 +10,9 @@
 # 17/02/18 - 0.61 Added FAST FORWORD button, some correction in comments
 # 18/02/18 - 0.77 FAST FORWARD regards entry list and calculates jumps
 # 21/02/18 - Merged cleanup code by @meleu
-# 21/02/19 - 0.79 Bug with idx resolved. Some Code cleanup
-# 22/02/19 - 0.80 Improved function use @meleu thx
+# 21/02/18 - 0.79 Bug with idx resolved. Some Code cleanup
+# 22/02/18 - 0.80 Improved function use @meleu thx
+# 24/02/18 - 0.81 I'm okay: Please wait message...
 
 # This will let you delete files in specific ROM folders
 # This script is best called into RetroPie Menu
@@ -30,13 +31,12 @@ folder_array=("${folder_array[@]%?}")
 folder_array=("${folder_array[@]##*/}")
 
 # Console Array
-console=("3do" "Panasonic 3DO" "atari2600" "Atari 2600" "atari5200" "Atari 5200" "atarijaguar" "Atari Jaguar" "coleco" "ColecoVision" \
-             "dreamcast" "Sega Dreamcast" "famicom" "Nintendo Famicom" "intellivision" "IntelliVision" "markiii" "Sega Mark III" \
-             "mastersystem" "Sega Master System" "megadrive" "Sega MegaDrive" "segacd" "Sega MegaCD" "n64" "Nintendo 64" \
-             "neogeo" "SNK Neo-Geo AES" "nes" "Nintendo Entertainment System" "nintendobsx" "Nintendo Satelliview" \
-             "pcengine" "NEC PC-Engine" "pcenginecd" "NEC PC_EnigneCD" "psx" "Sony Playstation" "saturn" "Sega Saturn" \
-             "sega32x" "Sega 32X" "sfc" "Nintendo Super Famicom" "snes" "Super Nintendo Entertainment System" "tg16" "TurboGrafx 16" \
-             "tg16cd" "TurboGrafx 16CD" "cps1" "Capcom Play System I" "cps2" "Capcom Play System II" "cps3" "Capcom Play System III")
+console=("3do" "Panasonic 3DO" "atari2600" "Atari 2600" "atari5200" "Atari 5200" "atarijaguar" "Atari Jaguar" "coleco" "ColecoVision" \             "dreamcast" "Sega Dreamcast" "famicom" "Nintendo Famicom" "intellivision" "IntelliVision" "markiii" "Sega Mark III" \
+         "mastersystem" "Sega Master System" "megadrive" "Sega MegaDrive" "segacd" "Sega MegaCD" "n64" "Nintendo 64" \
+         "neogeo" "SNK Neo-Geo AES" "nes" "Nintendo Entertainment System" "nintendobsx" "Nintendo Satelliview" \
+         "pcengine" "NEC PC-Engine" "pcenginecd" "NEC PC_EnigneCD" "psx" "Sony Playstation" "saturn" "Sega Saturn" \
+         "sega32x" "Sega 32X" "sfc" "Nintendo Super Famicom" "snes" "Super Nintendo Entertainment System" "tg16" "TurboGrafx 16" \
+         "tg16cd" "TurboGrafx 16CD" "cps1" "Capcom Play System I" "cps2" "Capcom Play System II" "cps3" "Capcom Play System III")
 
 # Search array for entry
 # Value 0 if match is in entry! Otherwise return 1 for system not found (use for debugging)
@@ -68,7 +68,7 @@ function folder_select() {
         fi
     done
 
-    local cmd=(dialog --backtitle "cyperghosts BashROMManager v0.80" \
+    local cmd=(dialog --backtitle "cyperghosts BashROMManager v0.81" \
                       --title " Systemselection " \
                       --ok-label "Select System" \
                       --cancel-label "Exit to ES" \
@@ -119,6 +119,8 @@ function toggle_entry() {
 
 # --- MAIN Programm --
 
+# Initialise
+echo "Please wait while initializing the BashROMManager ..."
 folderselect=1 #Needed to select system in first run
 
 while true; do
@@ -156,7 +158,7 @@ while true; do
     while true
     do
         old_choice=$choices
-        cmd=(dialog --backtitle "cyperghosts BashROMManager v0.80" \
+        cmd=(dialog --backtitle "cyperghosts BashROMManager v0.81" \
                     --default-item "$choices" \
                     --title " Selected Console: $console_name " \
                     --ok-label "Select items" \
