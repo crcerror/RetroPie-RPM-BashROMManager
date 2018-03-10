@@ -13,6 +13,7 @@
 # 21/02/18 - 0.79 Bug with idx resolved. Some Code cleanup
 # 22/02/18 - 0.80 Improved function use @meleu thx
 # 24/02/18 - 0.81 I'm okay: Please wait message...
+# 24/02/18 - 0.82 Empty subdirectories are treatad as entry
 
 # This will let you delete files in specific ROM folders
 # This script is best called into RetroPie Menu
@@ -62,13 +63,13 @@ function folder_select() {
     local options
 
     for i in "${folder_array[@]}"; do
-       if [[ -z "$(find "$rom_dir/$i" -type d -empty)" ]]; then 
+       if [[ -z "$(find "$rom_dir/$i" -maxdepth 0 -type d -empty)" ]]; then 
             array_idx="$(contains_element "$i" "${console[@]}")"
             [[ -z $array_idx ]] && options+=("$i" "System unknown") || options+=("$i" "${console[array_idx+1]}")
         fi
     done
 
-    local cmd=(dialog --backtitle "cyperghosts BashROMManager v0.81" \
+    local cmd=(dialog --backtitle "cyperghosts BashROMManager v0.82" \
                       --title " Systemselection " \
                       --ok-label "Select System" \
                       --cancel-label "Exit to ES" \
@@ -158,7 +159,7 @@ while true; do
     while true
     do
         old_choice=$choices
-        cmd=(dialog --backtitle "cyperghosts BashROMManager v0.81" \
+        cmd=(dialog --backtitle "cyperghosts BashROMManager v0.82" \
                     --default-item "$choices" \
                     --title " Selected Console: $console_name " \
                     --ok-label "Select items" \
